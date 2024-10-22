@@ -9,6 +9,8 @@ namespace linalg {
         size_t rows() const { return m_rows; }
         size_t columns() const { return m_columns; }
         ~Matrix();
+        Matrix(const Matrix& s); //конструктор копирования 
+        Matrix(Matrix&& s);//конструктор перемещения 
 
 
 
