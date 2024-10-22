@@ -19,4 +19,13 @@ int main() {
     std::cout << "Count rows (m4): " << m4.rows() << std::endl;
     std::cout << "Count columns (m4): " << m4.columns() << std::endl;
 
+    try {
+        m2.reshape(10, 0);
+        std::cout << "New size: " << m2.columns() << std::endl;
+    }
+    catch (const std::runtime_error& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+    }
+
 }
+
