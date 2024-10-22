@@ -1,0 +1,7 @@
+# ninja log v5
+21	494	7513367805259666	matrix/CMakeFiles/matrix.dir/source/matrix.cpp.obj	75521b17d6a89967
+3	511	7513367805415947	CMakeFiles/proga.dir/source/main.cpp.obj	f19506f477d5a345
+497	601	7513367806262081	matrix/matrix.lib	278660ddc83aff04
+602	1146	7513367811431462	proga.exe	e1f8f583c4e54199
+14	501	7513368433644854	CMakeFiles/proga.dir/source/main.cpp.obj	f19506f477d5a345
+502	848	7513368435962204	proga.exe	e1f8f583c4e54199

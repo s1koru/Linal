@@ -1,0 +1,6 @@
+C:/Users/serge/Desktop/lababa/labarotory_1/out/build/x64-Debug/CMakeFiles/proga.dir
+C:/Users/serge/Desktop/lababa/labarotory_1/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/serge/Desktop/lababa/labarotory_1/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/serge/Desktop/lababa/labarotory_1/out/build/x64-Debug/matrix/CMakeFiles/matrix.dir
+C:/Users/serge/Desktop/lababa/labarotory_1/out/build/x64-Debug/matrix/CMakeFiles/edit_cache.dir
+C:/Users/serge/Desktop/lababa/labarotory_1/out/build/x64-Debug/matrix/CMakeFiles/rebuild_cache.dir
