@@ -15,11 +15,11 @@ linalg::Matrix::Matrix(size_t rows) {
 
 linalg::Matrix::Matrix(const Matrix& s) {
     m_ptr = new double[s.m_rows * s.m_columns];
+    m_rows = s.m_rows;
+    m_columns = s.m_columns;
     for (size_t i = 0; i < m_rows * m_columns; ++i) {
         m_ptr[i] = s.m_ptr[i];
     }
-    m_rows = s.m_rows;
-    m_columns = s.m_columns;
 };
 
 linalg::Matrix::Matrix(Matrix&& s) {
@@ -34,7 +34,7 @@ linalg::Matrix::Matrix(Matrix&& s) {
 
 
 linalg::Matrix::~Matrix() {
-    if (m_ptr != nullptr) {
+    if (m_ptr != NULL) {
         delete[] m_ptr;
     };
 };
