@@ -3,19 +3,13 @@
 
 
 int main() {
-
+    //стандартный конструктор
     linalg::Matrix m0;
-    linalg::Matrix m1(4, 1);
-    int rows;
-    int columns;
+    linalg::Matrix m1(4);
+    linalg::Matrix m2(4, 6);
 
-    std::cout << "Enter count row: ";
-    std::cin >> rows;
-    std::cout << "Enter count columns: ";
-    std::cin >> columns;
-
-    linalg::Matrix matrix(rows, columns);
-
-    std::cout << "Count rows: " << matrix.rows() << std::endl;
-    std::cout << "Count columns: " << matrix.columns() << std::endl;
+    std::cout << "Count rows (m1): " << m1.rows() << std::endl;
+    std::cout << "Count columns (m1): " << m1.columns() << std::endl;
+    std::cout << "Count rows (m2): " << m2.rows() << std::endl;
+    std::cout << "Count columns (m2): " << m2.columns() << std::endl;
 }

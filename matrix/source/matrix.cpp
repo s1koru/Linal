@@ -7,6 +7,12 @@ linalg::Matrix::Matrix(size_t rows, size_t columns) {
     m_columns = columns;
 };
 
+linalg::Matrix::Matrix(size_t rows) {
+    m_ptr = new double[rows * 1];
+    m_rows = rows;
+    m_columns = 1;
+};
+
 linalg::Matrix::~Matrix() {
     delete[] m_ptr;
-}
+};
