@@ -44,6 +44,8 @@ namespace linalg {
         Matrix operator- (const Matrix& matrica) const;
         Matrix operator+= (const Matrix& matrica);
         Matrix operator-= (const Matrix& matrica);
+        Matrix operator* (const Matrix& matrica) const;
+        Matrix operator*= (const Matrix& matrica);
 
 
 

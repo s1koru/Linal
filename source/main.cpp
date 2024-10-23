@@ -10,6 +10,7 @@ int main() {
     m1(0, 0) = 5; m1(0, 1) = 6; m1(1, 0) = 7; m1(1, 1) = 8;
     m2(0, 0) = 4; m2(0, 1) = 6; m2(1, 0) = 6; m2(1, 1) = 7;
     m1 -= m2;
+    m1 *= m2;
     linalg::Matrix m3(m1);
     linalg::Matrix m4(std::move(m2));
     // linalg::Matrix m7 = {1, 2, 3, 4, 5, 6};

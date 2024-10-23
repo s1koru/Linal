@@ -198,5 +198,37 @@ linalg::Matrix linalg::Matrix::operator-= (const linalg::Matrix& matrica) {
     }
     return *this;
 };
+linalg::Matrix linalg::Matrix::operator* (const linalg::Matrix& matrica) const {
+    if (m_columns != matrica.m_rows) {
+        throw std::invalid_argument("sizes matrix different");
+    }
+    Matrix conclusion(m_rows, matrica.m_columns);
+    for (int i = 0; i < m_rows; ++i) {
+        for (int j = 0; j < matrica.m_columns; ++j) {
+            conclusion(i, j) = 0;
+            for (int l = 0; l < m_columns; ++l) {
+                conclusion(i, j) += (*this)(i, l) * matrica(l, j);
+            }
+        }
+    }
+    return conclusion;
+}
+
+linalg::Matrix linalg::Matrix::operator*= (const linalg::Matrix& matrica) {
+    if (m_columns != matrica.m_rows) {
+        throw std::invalid_argument("sizes matrix different");
+    }
+    Matrix conclusion(m_rows, matrica.m_columns);
+    for (int i = 0; i < m_rows; ++i) {
+        for (int j = 0; j < matrica.m_columns; ++j) {
+            conclusion(i, j) = 0;
+            for (int l = 0; l < m_columns; ++l) {
+                conclusion(i, j) += (*this)(i, l) * matrica(l, j);
+            }
+        }
+    }
+    *this = std::move(conclusion);
+    return *this;
+}
 
 
