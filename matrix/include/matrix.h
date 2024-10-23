@@ -48,6 +48,9 @@ namespace linalg {
 
         double trace() const;
         double norm() const;
+        Matrix deleteRowCol(const linalg::Matrix& m, size_t i, size_t j) const;
+        double det() const;
+
 
         Matrix transpose();
 

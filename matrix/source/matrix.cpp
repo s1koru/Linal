@@ -287,6 +287,40 @@ double linalg::Matrix::norm() const {
     return sqrt(summa);
 };
 
+linalg::Matrix linalg::Matrix::deleteRowCol(const linalg::Matrix& m, size_t i, size_t j) const {
+    Matrix newmatrix(m.m_rows - 1, m.m_columns - 1);
+    size_t new_row = 0;
+    for (size_t q = 0; q < m.m_rows; ++q) {
+        if (q == i) continue;
+        size_t new_col = 0;
+        for (size_t z = 0; z < m.m_columns; ++z) {
+            if (z == j) continue;
+            newmatrix(new_row, new_col) = m(q, z);
+            ++new_col;
+        }
+        ++new_row;
+    }
+    return newmatrix;
+};
+
+double linalg::Matrix::det() const {
+    if (m_rows != m_columns) {
+        throw std::invalid_argument("wrong size matrix");
+    }
+
+    if (m_rows == 1) { return (*this)(0, 0); }
+    if (m_columns == 2) {
+        return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
+    }
+    double determinant = 0;
+    for (int i = 0; i < m_columns; ++i) {
+        linalg::Matrix newma = deleteRowCol(*this, 0, i);
+        determinant += (i % 2 == 0 ? 1 : -1) * (*this)(0, i) * newma.det();
+    };
+    return determinant;
+};
+
+
 linalg::Matrix linalg::Matrix::transpose() {
     Matrix result(m_columns, m_rows);
     for (size_t i = 0; i < m_columns; ++i) {
@@ -309,4 +343,5 @@ linalg::Matrix linalg::Matrix::power(const linalg::Matrix& m, int c) {
         result = result * m;
     }
     return result;
-}
+};
+
