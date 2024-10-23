@@ -1,68 +1,73 @@
 #pragma once
 #include <cstddef>
 #include <initializer_list>
-
+#include <ostream>
 
 namespace linalg {
     class Matrix {
     public:
+        //возращение количества строк
+        size_t rows() const noexcept { return m_rows; }
+        //возращение количество столбцов
+        size_t columns() const noexcept { return m_columns; }
+        bool empty() const noexcept;
+        void reshape(size_t rows, size_t cols);
+
         //дефолтный конструктор 
-        Matrix() : m_rows(0), m_columns(0), m_ptr(nullptr) {};
+        Matrix() = default;
 
         //конструктор с параметрами: 
         //с одним параметром - rows 
         Matrix(size_t rows);
         //c двумя параметрами 
         Matrix(size_t rows, size_t columns);
-
-        size_t rows() const { return m_rows; }
-        size_t columns() const { return m_columns; }
-        bool empty() const;
-        void reshape(int rows, int cols);
         //конструктор копирования 
         Matrix(const Matrix& s);
         //конструктор перемещения 
-        Matrix(Matrix&& s);
+        Matrix(Matrix&& s) noexcept;
+        //унифицированная инициализация 
         Matrix(std::initializer_list<double> s);
         Matrix(std::initializer_list<std::initializer_list<double>> s);
         ~Matrix() { delete[] m_ptr; }
 
         Matrix& operator= (const Matrix& m);
-        Matrix& operator= (Matrix&& m);
+        Matrix& operator= (Matrix&& m) noexcept;
 
-        double& operator()(size_t row, size_t col);
-        const double& operator()(size_t row, size_t col) const;
+        double& operator()(const size_t row, const size_t col);
+        const double& operator()(const size_t row, const size_t col) const;
 
-        double& operator()(int i, int j);
-        const double& operator()(int i, int j) const;
-        void print() const;
 
-        Matrix operator+ (const Matrix& matrica) const;
         Matrix operator+= (const Matrix& matrica);
-        Matrix operator- (const Matrix& matrica) const;
+
         Matrix operator-= (const Matrix& matrica);
-        Matrix operator* (const Matrix& matrica) const;
         Matrix operator*= (const Matrix& matrica);
-        Matrix operator* (const double c) const;
+        Matrix operator*= (const double c);
 
 
         double trace() const;
-        double norm() const;
-        Matrix deleteRowCol(const linalg::Matrix& m, size_t i, size_t j) const;
+        double norm() const noexcept;
         double det() const;
-        static Matrix invert(const Matrix& matr);
-
-
-        Matrix transpose();
-        static Matrix concatenate(const Matrix& m1, const Matrix& m2);
-
-        Matrix power(const Matrix& m, int c);
 
         bool operator== (const Matrix& matrica) const;
         bool operator!= (const Matrix& matrica) const;
     private:
-        double* m_ptr;
-        size_t m_rows;
-        size_t m_columns;
+        double* m_ptr = nullptr;
+        size_t m_rows = 0;
+        size_t m_columns = 0;
     };
+
+    const Matrix transpose(const Matrix& matrica);
+    Matrix power(const Matrix& m, const int c);
+    const Matrix concatenate(const linalg::Matrix& m1, const linalg::Matrix& m2);
+    const Matrix invert(const linalg::Matrix& matr);
+    const Matrix operator+ (const Matrix& m1, const Matrix& m2);
+    const Matrix operator- (const Matrix& m1, const Matrix& m2);
+    const Matrix operator * (double z, const Matrix& matrica);
+    bool operator== (const Matrix& m1, const Matrix& m2);
+    bool operator!= (const Matrix& m1, const Matrix& m2);
+    const Matrix operator* (const Matrix& m1, const Matrix& m2);
+    const Matrix operator* (const Matrix& m, double c);
+    Matrix deleteRowCol(const linalg::Matrix& m, size_t i, size_t j);
+    std::ostream& operator << (std::ostream& out, const Matrix& m);
+
 }

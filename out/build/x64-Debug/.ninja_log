@@ -37,3 +37,8 @@
 31	1399	7513953247595041	CMakeFiles/proga.dir/source/main.cpp.obj	34ec84cae04f2ab2
 1384	1597	7513953249835024	matrix/matrix.lib	278660ddc83aff04
 1597	2426	7513953256965132	proga.exe	e1f8f583c4e54199
+33	1394	7514093018183490	CMakeFiles/proga.dir/source/main.cpp.obj	34ec84cae04f2ab2
+21	676	7514094201907233	CMakeFiles/proga.dir/source/main.cpp.obj	34ec84cae04f2ab2
+49	839	7514094203542892	matrix/CMakeFiles/matrix.dir/source/matrix.cpp.obj	451372f29f854d85
+839	1053	7514094205617321	matrix/matrix.lib	278660ddc83aff04
+1053	1923	7514094213311060	proga.exe	e1f8f583c4e54199
