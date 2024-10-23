@@ -331,6 +331,44 @@ linalg::Matrix linalg::Matrix::transpose() {
     return result;
 };
 
+linalg::Matrix linalg::Matrix::concatenate(const Matrix& m1, const Matrix& m2) {
+    if (m1.m_rows != m2.m_rows) {
+        throw std::invalid_argument("different m_rows");
+    }
+    Matrix result(m1.m_rows, m1.m_columns + m2.m_columns);
+    for (size_t i = 0; i < m1.m_rows; ++i) {
+        for (size_t j = 0; j < m1.m_columns; ++j) {
+            result(i, j) = m1(i, j);
+        }
+    }
+    for (size_t i = 0; i < m2.m_rows; ++i) {
+        for (size_t j = 0; j < m2.m_columns; ++j) {
+            result(i, m1.m_columns + j) = m2(i, j);
+        }
+    }
+    return result;
+};
+
+linalg::Matrix linalg::Matrix::invert(const Matrix& matr) {
+    if (matr.m_rows != matr.m_columns) {
+        throw std::invalid_argument("size matrix is wrong");
+    }
+    Matrix result(matr.m_rows, matr.m_columns);
+    double determinant = matr.det();
+    if (determinant == 0) {
+        throw std::invalid_argument("determinant == 0");
+    }
+    for (size_t i = 0; i < matr.m_rows; ++i) {
+        for (size_t j = 0; j < matr.m_columns; ++j) {
+            linalg::Matrix spd = matr.deleteRowCol(matr, i, j);
+            result(i, j) = std::pow(-1, i + j) * spd.det() / determinant;
+        }
+    }
+
+    return result.transpose();
+}
+
+
 linalg::Matrix linalg::Matrix::power(const linalg::Matrix& m, int c) {
     Matrix result(m.m_columns, m.m_rows);
     for (size_t i = 0; i < m.m_rows; ++i) {

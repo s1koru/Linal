@@ -9,8 +9,8 @@ int main() {
     linalg::Matrix m2(4, 6);
     linalg::Matrix m3(m1);
     linalg::Matrix m4(std::move(m2));
-    linalg::Matrix m5 = { {1, 2, 6, -3, 20}, {5, 6, 7, 1, 1}, {1, 2, 3, 4, 5}, {9, 8, 7, 6, 5}, {3, 5, 7, 76, 23} };
-    linalg::Matrix m6 = { {1, 2, 3, 4, 5, 6} };
+    linalg::Matrix m5 = { {1, 2, 3}, {4, 5, 6}, {7, 8, 10} };
+    linalg::Matrix m6 = { {1, 2, 3, 4, 5, 6}, {1, 2, 3, 4, 5, 6} };
     linalg::Matrix m7 = { 1, 2, 3, 4, 5, 6 };
     // linalg::Matrix m8 = {{1}, {2}, {3}, {4}, {5}, {6}};
 
@@ -19,6 +19,8 @@ int main() {
     m5.print();
     double result = m5.det();
     std::cout << result;
+    linalg::Matrix d = linalg::Matrix::invert(m5);
+    d.print();
 
     // m8.print();
     // m1.print();
