@@ -29,7 +29,11 @@ namespace linalg {
 
         Matrix(const Matrix& s); //конструктор копирования 
         Matrix(Matrix&& s);//конструктор перемещения 
-        double operator[](size_t i) { return m_ptr[i]; }
+        double& operator()(int i, int j);
+        const double& operator()(int i, int j) const;
+        void print() const;
+
+
 
 
     private:

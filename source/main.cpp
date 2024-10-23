@@ -27,5 +27,13 @@ int main() {
         std::cerr << "ERROR: " << e.what() << std::endl;
     }
 
+    for (int i = 0; i < m2.rows(); ++i) {
+        for (int j = 0; j < m2.columns(); ++j) {
+            std::cin >> m2(i, j);
+        }
+    }
+    m2.print();
+
+
 }
 

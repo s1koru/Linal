@@ -79,4 +79,22 @@ linalg::Matrix::Matrix(Matrix&& s) {
 //     }
 // };
 
+double& linalg::Matrix::operator() (int i, int j) {
+    return *(m_ptr + i * m_columns + j);
+};
+
+const double& linalg::Matrix::operator()(int i, int j) const {
+    return *(m_ptr + i * m_columns + j);
+};
+
+void linalg::Matrix::print() const {
+    for (int i = 0; i < m_rows; ++i) {
+        std::cout << " | ";
+        for (int j = 0; j < m_columns; ++j) {
+            std::cout.width(3);
+            std::cout << *(m_ptr + i * m_rows + j) << " ";
+        }
+        std::cout << "| \n" << std::endl;
+    }
+}
 
