@@ -134,23 +134,6 @@ const double& linalg::Matrix::operator()(size_t row, size_t cols) const {
     return m_ptr[row * m_columns + cols];
 }
 
-//функция, которая будет находить максимальное по длине число из всей матрицы 
-static size_t max_dlina_ch_of_m(const linalg::Matrix& m) {
-    size_t max_number_of_digitals = 0;
-    size_t cols = m.columns();
-    size_t rows = m.rows();
-    for (size_t i = 0; i < cols; ++i) {
-        for (size_t j = 0; j < rows; ++j) {
-            std::stringstream sout;
-            sout << m(j, i);
-            size_t dlina = sout.str().size();
-            if (max_number_of_digitals < dlina) {
-                max_number_of_digitals = dlina;
-            }
-        }
-    }
-    return max_number_of_digitals;
-}
 
 //функция, которая находит максимальную длину числа из первого столбика 
 static size_t max_dlina_ch_left(const linalg::Matrix& m) {
@@ -168,19 +151,41 @@ static size_t max_dlina_ch_left(const linalg::Matrix& m) {
 }
 
 //форматированный вывод 
-std::ostream& linalg::operator << (std::ostream& out, const linalg::Matrix& m) {
+// Вспомогательные функции для вычисления длины чисел (для красивого форматирования)
+size_t max_dlina_ch_of_m(const linalg::Matrix& m) {
+    double max_value = 0;
+    for (size_t i = 0; i < m.rows(); ++i) {
+        for (size_t j = 0; j < m.columns(); ++j) {
+            double value = std::fabs(m(i, j));
+            if (value > max_value) {
+                max_value = value;
+            }
+        }
+    }
+    return static_cast<size_t>(std::ceil(std::log10(max_value + 1)));  // Максимальное количество цифр в числе
+}
+
+
+// Перегрузка оператора <<
+std::ostream& linalg::operator<<(std::ostream& out, const linalg::Matrix& m) {
     if (m.empty()) return out << "| empty matrix |";
+
     size_t max_number_of_digitals = max_dlina_ch_of_m(m);
     size_t maxim_left = max_dlina_ch_left(m);
-    // out << std::fixed << std::setprecision(15); //фиксированная длина после запятой 
+
+    out << std::fixed << std::setprecision(3);  // Фиксированное количество знаков после запятой (3)
+
     for (size_t i = 0; i < m.rows(); ++i) {
-        out << "|";
-        out << std::setw(maxim_left) << m(i, 0);
+        out << "|";  // Начало строки
+        out << std::setw(maxim_left + 3) << m(i, 0);  // Первый элемент строки с отступом
+
         for (size_t j = 1; j < m.columns(); ++j) {
-            out << std::setw(max_number_of_digitals + 1) << m(i, j);
+            out << std::setw(max_number_of_digitals + 6) << m(i, j);  // Остальные элементы с большим отступом
         }
-        out << "|\n";
+
+        out << " |\n";  // Конец строки
     }
+
     return out;
 }
 
@@ -437,26 +442,4 @@ linalg::Matrix linalg::power(const Matrix& m, const int c) {
     }
     return result;
 }
-
-
-// linalg::Matrix linalg::Matrix::U(const Matrix& m) { 
-//     Matrix u(m);
-//     for (size_t i = 0; i < m.m_rows; ++i) { 
-//         for (size_t j = 0; j < m.m_columns; ++j) { 
-//             u(i, j) = m(i, j);
-//         }
-//     }
-
-//     for (size_t col = 0; col < m.m_columns; ++col) { 
-//         for (size_t row = col+1; row < m.m_rows; ++row) { 
-//             double value = u(row, col) / u(col, col);
-//             double prom = round(value*10)/10.0;
-//             for (size_t col2 = col; col2 < m.m_columns; ++col2) { 
-//                 double el =  u(row, col2)- u(col, col2)*prom;
-//                 u(row, col2) = el;
-//             }
-//         }
-//     }
-//     return u;
-// };
 

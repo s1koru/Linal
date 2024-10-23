@@ -67,4 +67,5 @@ namespace linalg {
     Matrix deleteRowCol(const linalg::Matrix& m, size_t i, size_t j);
     std::ostream& operator << (std::ostream& out, const Matrix& m);
 
+
 }
