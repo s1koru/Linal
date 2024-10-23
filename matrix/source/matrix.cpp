@@ -13,6 +13,9 @@ bool linalg::Matrix::empty() const {
 }
 
 void linalg::Matrix::reshape(int rows, int cols) {
+    if (rows == 0 || cols == 0) {
+        throw std::runtime_error("Empty matrix");
+    }
     if (m_rows != rows || m_columns != cols) {
         delete[] m_ptr;
         m_ptr = new double[rows * cols];
@@ -35,7 +38,7 @@ void linalg::Matrix::reshape(int rows, int cols) {
         }
 
     }
-}
+};
 
 linalg::Matrix::Matrix(size_t rows) {
     m_ptr = new double[rows * 1];
@@ -44,6 +47,11 @@ linalg::Matrix::Matrix(size_t rows) {
 };
 
 linalg::Matrix::Matrix(const Matrix& s) {
+    if (s.m_ptr == nullptr) {
+        m_ptr = nullptr;
+        m_rows = 0;
+        m_columns = 0;
+    }
     m_ptr = new double[s.m_rows * s.m_columns];
     m_rows = s.m_rows;
     m_columns = s.m_columns;
@@ -62,8 +70,19 @@ linalg::Matrix::Matrix(Matrix&& s) {
     s.m_columns = 0;
 };
 
-// linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> mm) {
-//     m_rows = mm.size();
+// linalg::Matrix::Matrix(std::initializer_list<double> s) { 
+//     m_ptr = new double[s.size()];
+//     m_rows = s.size(); 
+//     m_columns = 1;
+//     size_t i = 0; 
+//     for (double el:m) { 
+//         m_ptr[i++] = el;
+//     }
+// }
+
+
+// linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> s) {
+//     m_rows = s.size();
 //     if (m_rows == 0) {
 //         m_columns = 0;
 //     } else {
@@ -73,11 +92,52 @@ linalg::Matrix::Matrix(Matrix&& s) {
 //     m_ptr = new double[m_rows * m_columns];
 //     size_t i = 0;
 //     for (const std::initializer_list<double>& row : mm) {
+//         if (row.size() != m_columns) { 
+//             throw std::invalid_argument("all rows should have the same len");
+//         }
+
 //         for (const double& el : row) {
 //             m_ptr[i++] = el;
 //         }
 //     }
 // };
+
+linalg::Matrix& linalg::Matrix::operator= (const Matrix& m) {
+    if (m_columns * m_rows != m_columns * m_rows) {
+        delete[] m_ptr;
+        m_ptr = new double[m.m_rows * m.m_columns];
+        m_rows = m.m_rows;
+        m_columns = m.m_columns;
+    }
+
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        m_ptr[i] = m.m_ptr[i];
+    }
+
+    return *this;
+};
+
+linalg::Matrix& linalg::Matrix::operator=(Matrix&& m) {
+    std::swap(m_ptr, m.m_ptr);
+    std::swap(m_rows, m.m_rows);
+    std::swap(m_columns, m.m_columns);
+    return *this;
+};
+
+double& linalg::Matrix::operator()(size_t row, size_t cols) {
+    if (row > m_rows || cols > m_columns) {
+        throw std::out_of_range("size error");
+    }
+    return m_ptr[row * m_columns + cols];
+}
+
+const double& linalg::Matrix::operator()(size_t row, size_t cols) const {
+    if (row > m_rows || cols > m_columns) {
+        throw std::out_of_range("size error");
+    };
+    return m_ptr[row * m_columns + cols];
+};
+
 
 double& linalg::Matrix::operator() (int i, int j) {
     return *(m_ptr + i * m_columns + j);
@@ -96,5 +156,47 @@ void linalg::Matrix::print() const {
         }
         std::cout << "| \n" << std::endl;
     }
-}
+};
+linalg::Matrix linalg::Matrix::operator+ (const linalg::Matrix& matrica) const {
+    if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
+        throw std::invalid_argument("matrix sizes don't match");
+    }
+    Matrix conclusion(m_rows, m_columns);
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        conclusion.m_ptr[i] = m_ptr[i] + matrica.m_ptr[i];
+    }
+    return conclusion;
+};
+
+linalg::Matrix linalg::Matrix::operator+= (const linalg::Matrix& matrica) {
+    if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
+        throw std::invalid_argument("matrix sizes don't match");
+    }
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        this->m_ptr[i] += matrica.m_ptr[i];
+    }
+    return *this;
+};
+
+linalg::Matrix linalg::Matrix::operator- (const linalg::Matrix& matrica) const {
+    if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
+        throw std::invalid_argument("matrix sizes don't match");
+    }
+    Matrix conclusion(m_rows, m_columns);
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        conclusion.m_ptr[i] = m_ptr[i] - matrica.m_ptr[i];
+    }
+    return conclusion;
+};
+
+linalg::Matrix linalg::Matrix::operator-= (const linalg::Matrix& matrica) {
+    if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
+        throw std::invalid_argument("matrix sizes don't match");
+    }
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        this->m_ptr[i] -= matrica.m_ptr[i];
+    }
+    return *this;
+};
+
 

@@ -20,12 +20,19 @@ namespace linalg {
         size_t columns() const { return m_columns; }
        
 
-        // Matrix(std::initializer_list<std::initializer_list<double>> mm);
+        // Matrix(std::initializer_list<double> s);
+        // Matrix(std::initializer_list<std::initializer_list<double>> s);
 
-
-        ~Matrix() {
+        ~Matrix() { 
             delete[] m_ptr; 
         }
+
+        Matrix& operator= (const Matrix& m);
+        Matrix& operator= (Matrix&& m);
+
+        double& operator()(size_t row, size_t col);
+        const double& operator()(size_t row, size_t col) const;
+
 
         Matrix(const Matrix& s); //конструктор копирования 
         Matrix(Matrix&& s);//конструктор перемещения 
@@ -33,6 +40,10 @@ namespace linalg {
         const double& operator()(int i, int j) const;
         void print() const;
 
+        Matrix operator+ (const Matrix& matrica) const;
+        Matrix operator- (const Matrix& matrica) const;
+        Matrix operator+= (const Matrix& matrica);
+        Matrix operator-= (const Matrix& matrica);
 
 
 
