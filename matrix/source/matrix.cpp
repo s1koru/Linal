@@ -145,15 +145,19 @@ const double& linalg::Matrix::operator()(int i, int j) const {
 };
 
 void linalg::Matrix::print() const {
+    std::cout << std::fixed;  //      ( )
+    std::cout.precision(3);   //      (3 ,  )
+
     for (int i = 0; i < m_rows; ++i) {
         std::cout << " | ";
         for (int j = 0; j < m_columns; ++j) {
-            std::cout.width(3);
+            std::cout.width(6);  //      (   )
             std::cout << *(m_ptr + i * m_columns + j) << " ";
         }
         std::cout << "| \n" << std::endl;
     }
-};
+}
+
 
 linalg::Matrix linalg::Matrix::operator+ (const linalg::Matrix& matrica) const {
     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
