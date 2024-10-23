@@ -5,6 +5,8 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <limits>
+
 bool linalg::Matrix::empty() const noexcept {
     return m_columns == 0 && m_rows == 0;
 }
@@ -282,6 +284,7 @@ const linalg::Matrix linalg::operator* (const double c, const Matrix& m) {
 
 //перемножение совместимых матриц Matrix *= Matrix (lvalue) 
 linalg::Matrix linalg::Matrix::operator*= (const Matrix& m) {
+    if (m.empty()) { throw std::runtime_error("matrix is empty"); }
     if (m_columns != m.m_rows) { throw std::runtime_error("sizes matrix different"); }
     Matrix result(m_rows, m.m_columns);
     for (int i = 0; i < m_rows; ++i) {
@@ -305,18 +308,25 @@ linalg::Matrix linalg::Matrix::operator*= (const double c) {
     return *this;
 }
 
-//проверка матриц на совпадение bool (Matrix == Matrix)
 bool linalg::operator== (const Matrix& m1, const Matrix& m2) {
+    // Проверка на равенство количества строк и столбцов
     if (m1.rows() != m2.rows() || m1.columns() != m2.columns()) return false;
+
+    // Задаём точность сравнения
     double eps = std::numeric_limits<double>::epsilon();
+
+    // Сравнение всех элементов с учётом допустимой погрешности
     for (size_t i = 0; i < m1.rows(); ++i) {
         for (size_t j = 0; j < m1.columns(); ++j) {
-            if (std::abs(m1(i, j) - m2(i, j)) > eps * 1000) return false;
+            if (std::abs(m1(i, j) - m2(i, j)) > eps * 1e7) {  // Корректируем допустимую погрешность
+                return false;
+            }
         }
     }
+
+    // Если все элементы совпали в пределах погрешности, матрицы считаются равными
     return true;
 }
-
 //проверка матриц на НЕ совпадение Matrix != Matrix (bool)
 bool linalg::operator!= (const Matrix& m1, const Matrix& m2) {
     return !(m1 == m2);
@@ -343,6 +353,7 @@ double linalg::Matrix::trace() const {
 
 //вспомогательный метод, который удаляет у матрицы i строку и j столбей 
 linalg::Matrix linalg::deleteRowCol(const linalg::Matrix& m, size_t i, size_t j) {
+    if (m.empty()) { throw std::runtime_error("matrix is empty"); }
     Matrix newmatrix(m.rows() - 1, m.columns() - 1);
     size_t new_row = 0;
     for (size_t q = 0; q < m.rows(); ++q) {
@@ -389,6 +400,7 @@ const linalg::Matrix linalg::concatenate(const Matrix& m1, const Matrix& m2) {
 
 //Транспонирование
 const linalg::Matrix linalg::transpose(const Matrix& m) {
+    if (m.empty()) { throw std::runtime_error("matrix is empty"); }
     Matrix result(m.columns(), m.rows());
     for (size_t i = 0; i < m.columns(); ++i) {
         for (size_t j = 0; j < m.rows(); ++j) {
@@ -422,7 +434,7 @@ linalg::Matrix linalg::matrix_unit(size_t size) {
     for (size_t i = 0; i < size; i++) {
         for (size_t j = 0; j < size; ++j) {
             if (i == j) m(i, j) = 1;
-            else m(i, j) == 0;
+            else m(i, j) = 0;
         }
     }
     return m;
@@ -443,3 +455,73 @@ linalg::Matrix linalg::power(const Matrix& m, const int c) {
     return result;
 }
 
+void linalg::Matrix::gaussianElimination() {
+    for (size_t i = 0; i < m_rows; ++i) {
+        // Поиск максимального элемента в текущем столбце
+        size_t maxRow = i;
+        for (size_t k = i + 1; k < m_rows; ++k) {
+            if (std::fabs(m_ptr[k * m_columns + i]) > std::fabs(m_ptr[maxRow * m_columns + i])) {
+                maxRow = k;
+            }
+        }
+
+        // Обмен текущей строкой с максимальной, если maxRow изменился
+        if (maxRow != i) {
+            for (size_t k = 0; k < m_columns; ++k) {
+                // Обмен элементов строк
+                std::swap(m_ptr[maxRow * m_columns + k], m_ptr[i * m_columns + k]);
+            }
+        }
+
+        // Проверка на нулевой элемент на главной диагонали
+        //if (std::fabs(m_ptr[i * m_columns + i]) < 1e-10) { // Используем небольшой порог
+          //  throw std::runtime_error("Matrix is singular and cannot be solved.");
+        //}
+
+        // Приведение строк ниже к 0
+        for (size_t k = i + 1; k < m_rows; ++k) {
+            double factor = m_ptr[k * m_columns + i] / m_ptr[i * m_columns + i];
+            for (size_t j = i; j < m_columns; ++j) {
+                m_ptr[k * m_columns + j] -= factor * m_ptr[i * m_columns + j];
+            }
+        }
+
+        // Вывод состояния матрицы после текущего шага
+       // std::cout << "Step " << i + 1 << ":\n" << *this << "\n"; // Предполагается, что оператор вывода << перегружен
+    }
+}
+size_t linalg::Matrix::rank() const {
+    // Проверка на пустую матрицу
+    if (m_rows == 0 || m_columns == 0) {
+        throw std::invalid_argument("Matrix is empty. Rank cannot be determined.");
+    }
+
+    // Создание копии матрицы, чтобы не изменять оригинал
+    linalg::Matrix temp(*this);
+
+    try {
+        temp.gaussianElimination(); // Приведение к ступенчатому виду
+    }
+    catch (const std::runtime_error& e) {
+        throw std::runtime_error("Error during Gaussian elimination: " + std::string(e.what()));
+    }
+
+    size_t rank = 0;
+    for (size_t i = 0; i < temp.m_rows; ++i) {
+        bool isZeroRow = true;
+
+        // Проверка, является ли строка нулевой
+        for (size_t j = 0; j < temp.m_columns; ++j) {
+            if (std::fabs(temp.m_ptr[i * temp.m_columns + j]) > 1e-9) { // Используем допустимую погрешность
+                isZeroRow = false;
+                break;
+            }
+        }
+
+        if (!isZeroRow) {
+            rank++; // Увеличиваем ранг, если строка ненулевая
+        }
+    }
+
+    return rank;
+}

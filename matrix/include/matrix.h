@@ -46,6 +46,8 @@ namespace linalg {
         double trace() const;
         double norm() const noexcept;
         double det() const;
+        void gaussianElimination();
+        size_t rank() const;
     private:
         double* m_ptr = nullptr;
         size_t m_rows = 0;
