@@ -20,8 +20,8 @@ namespace linalg {
         size_t columns() const { return m_columns; }
        
 
-        // Matrix(std::initializer_list<double> s);
-        // Matrix(std::initializer_list<std::initializer_list<double>> s);
+        Matrix(std::initializer_list<double> s);
+        Matrix(std::initializer_list<std::initializer_list<double>> s);
 
         ~Matrix() { 
             delete[] m_ptr; 
@@ -44,10 +44,17 @@ namespace linalg {
         Matrix operator- (const Matrix& matrica) const;
         Matrix operator+= (const Matrix& matrica);
         Matrix operator-= (const Matrix& matrica);
-        Matrix operator* (const Matrix& matrica) const;
         Matrix operator*= (const Matrix& matrica);
+        Matrix operator* (const double c) const;
 
 
+        double trace() const;
+        double norm() const;
+
+        
+
+        bool operator== (const Matrix& matrica) const;
+        bool operator!= (const Matrix& matrica) const;
 
     private:
         double* m_ptr;
