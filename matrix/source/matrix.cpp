@@ -13,11 +13,12 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
     if (rows == 0 || cols == 0) {
         throw std::runtime_error("empty matrix");
     }
-    m_rows = rows;
-    m_columns = cols;
     if (rows * cols != m_rows * m_columns) {
         throw std::runtime_error("impossilbe to change size");
     }
+
+    m_rows = rows;
+    m_columns = cols;
 }
 
 //конструктор с одним параметром 
@@ -151,6 +152,7 @@ static size_t max_dlina_ch_of_m(const linalg::Matrix& m) {
     return max_number_of_digitals;
 }
 
+//функция, которая находит максимальную длину числа из первого столбика 
 static size_t max_dlina_ch_left(const linalg::Matrix& m) {
     size_t maxim_dl_left = 0;
     size_t rows = m.rows();
@@ -164,11 +166,13 @@ static size_t max_dlina_ch_left(const linalg::Matrix& m) {
     }
     return maxim_dl_left;
 }
+
 //форматированный вывод 
 std::ostream& linalg::operator << (std::ostream& out, const linalg::Matrix& m) {
     if (m.empty()) return out << "| empty matrix |";
     size_t max_number_of_digitals = max_dlina_ch_of_m(m);
     size_t maxim_left = max_dlina_ch_left(m);
+    // out << std::fixed << std::setprecision(15); //фиксированная длина после запятой 
     for (size_t i = 0; i < m.rows(); ++i) {
         out << "|";
         out << std::setw(maxim_left) << m(i, 0);
@@ -180,239 +184,260 @@ std::ostream& linalg::operator << (std::ostream& out, const linalg::Matrix& m) {
     return out;
 }
 
+//ОПЕРАТОРЫ
+//поэлементное сложение матриц Matrix + Matrix = rvalue
+const linalg::Matrix linalg::operator+ (const linalg::Matrix& m1, const linalg::Matrix& m2) {
+    if (m1.rows() != m2.rows() || m1.columns() != m2.columns()) {
+        throw std::runtime_error("matrix sizes don't match");
+    }
+    size_t row = m1.rows();
+    size_t col = m1.columns();
+    Matrix result(row, col);
+    for (size_t i = 0; i < row; ++i) {
+        for (size_t j = 0; j < col; ++j) {
+            result(i, j) = m1(i, j) + m2(i, j);
+        }
+    }
+    return result;
+}
 
-// linalg::Matrix linalg::Matrix::operator+ (const linalg::Matrix &matrica) const {
-//     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) { 
-//         throw std::invalid_argument("matrix sizes don't match");
-//     }
-//     Matrix conclusion(m_rows, m_columns); 
-//     for (size_t i = 0; i < m_rows * m_columns; ++i) { 
-//         conclusion.m_ptr[i] = m_ptr[i] + matrica.m_ptr[i];
-//     }
-//     return conclusion; 
-// };
+//поэлементное сложение матриц Matrix += Matrix (lvalue)
+linalg::Matrix linalg::Matrix::operator+= (const linalg::Matrix& m) {
+    if (m_rows != m.m_rows || m_columns != m.m_columns) {
+        throw std::runtime_error("matrix sizes don't match");
+    }
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        m_ptr[i] += m.m_ptr[i];
+    }
+    return *this;
+}
 
-// linalg::Matrix linalg::Matrix::operator+= (const linalg::Matrix &matrica) { 
-//     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) { 
-//         throw std::invalid_argument("matrix sizes don't match");
-//     }
-//     for (size_t i = 0; i < m_rows * m_columns; ++i) { 
-//         this->m_ptr[i] += matrica.m_ptr[i];
-//     }
-//     return *this;
-// };
+//поэлементное вычитание матриц Matrix - Matrix = result (rvalue) 
+const linalg::Matrix linalg::operator- (const linalg::Matrix& m1, const linalg::Matrix& m2) {
+    if (m1.rows() != m2.rows() || m1.columns() != m2.columns()) {
+        throw std::runtime_error("matrix sizes don't match");
+    }
+    size_t row = m1.rows();
+    size_t col = m1.columns();
+    Matrix result(row, col);
+    for (size_t i = 0; i < row; ++i) {
+        for (size_t j = 0; j < col; ++j) {
+            result(i, j) = m1(i, j) - m2(i, j);
+        }
+    }
+    return result;
+};
 
-// linalg::Matrix linalg::Matrix::operator- (const linalg::Matrix &matrica) const {
-//     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) { 
-//         throw std::invalid_argument("matrix sizes don't match");
-//     }
-//     Matrix conclusion(m_rows, m_columns); 
-//     for (size_t i = 0; i < m_rows * m_columns; ++i) { 
-//         conclusion.m_ptr[i] = m_ptr[i] - matrica.m_ptr[i];
-//     }
-//     return conclusion; 
-// };
+//Поэлементное вычитание матриц Matrix -= Matrix (lvalue) 
+linalg::Matrix linalg::Matrix::operator-= (const linalg::Matrix& m) {
+    if (m_rows != m.m_rows || m_columns != m.m_columns) {
+        throw std::runtime_error("matrix sizes don't match");
+    }
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        m_ptr[i] -= m.m_ptr[i];
+    }
+    return *this;
+}
 
-// linalg::Matrix linalg::Matrix::operator-= (const linalg::Matrix &matrica) { 
-//     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) { 
-//         throw std::invalid_argument("matrix sizes don't match");
-//     }
-//     for (size_t i = 0; i < m_rows * m_columns; ++i) { 
-//         this->m_ptr[i] -= matrica.m_ptr[i];
-//     }
-//     return *this;
-// };
+//перемножение совместимых матриц Matrix * Matrix = result (rvalue)
+const linalg::Matrix linalg::operator* (const Matrix& m1, const Matrix& m2) {
+    if (m1.columns() != m2.rows()) {
+        throw std::runtime_error("sizes matrix different");
+    }
+    Matrix result(m1.rows(), m2.columns());
+    for (size_t i = 0; i < m1.rows(); ++i) {
+        for (size_t j = 0; j < m2.columns(); ++j) {
+            result(i, j) = 0;
+            for (size_t l = 0; l < m2.rows(); ++l) {
+                result(i, j) += m1(i, l) * m2(l, j);
+            }
+        }
+    }
+    return result;
+}
 
-// linalg::Matrix linalg::Matrix::operator* (const linalg::Matrix &matrica) const { 
-//     if (m_columns != matrica.m_rows) { 
-//         throw std::invalid_argument("sizes matrix different");
-//     }
-//     Matrix conclusion(m_rows, matrica.m_columns);
-//     for (int i = 0; i < m_rows; ++i) { 
-//         for (int j = 0; j < matrica.m_columns; ++j) { 
-//             conclusion(i, j) = 0; 
-//             for (int l = 0; l < m_columns; ++l) { 
-//                 conclusion(i, j) += (*this)(i, l) * matrica(l, j);
-//             }
-//         }
-//     }
-//     return conclusion;
-// }
+//поэлементное перемножение на число double * Matrix = result (rvalue)
+const linalg::Matrix linalg::operator* (const Matrix& m, double c) {
+    if (m.empty()) { throw std::runtime_error("empty matric"); }
+    linalg::Matrix result(m.rows(), m.columns());
+    for (size_t i = 0; i < m.rows(); ++i) {
+        for (size_t j = 0; j < m.columns(); ++j) {
+            result(i, j) = c * m(i, j);
+        }
+    }
+    return result;
+}
 
-// linalg::Matrix linalg::Matrix::operator*= (const linalg::Matrix &matrica) { 
-//     if (m_columns != matrica.m_rows) { 
-//         throw std::invalid_argument("sizes matrix different");
-//     }
-//     Matrix conclusion(m_rows, matrica.m_columns);
-//     for (int i = 0; i < m_rows; ++i) { 
-//         for (int j = 0; j < matrica.m_columns; ++j) { 
-//             conclusion(i, j) = 0; 
-//             for (int l = 0; l < m_columns; ++l) { 
-//                 conclusion(i, j) += (*this)(i, l) * matrica(l, j);
-//             }
-//         }
-//     }
-//     *this = std::move(conclusion);
-//     return *this;
-// }
+//поэлементное перемножение на число Matrix * double = result (rvalue) 
+const linalg::Matrix linalg::operator* (const double c, const Matrix& m) {
+    if (m.empty()) { throw std::runtime_error("empty matric"); }
+    linalg::Matrix result = m * c;
+    return result;
+}
 
-// linalg::Matrix linalg::Matrix::operator* (const double c){ 
-//     if (empty()) {throw std::invalid_argument("empty matric");}
+//перемножение совместимых матриц Matrix *= Matrix (lvalue) 
+linalg::Matrix linalg::Matrix::operator*= (const Matrix& m) {
+    if (m_columns != m.m_rows) { throw std::runtime_error("sizes matrix different"); }
+    Matrix result(m_rows, m.m_columns);
+    for (int i = 0; i < m_rows; ++i) {
+        for (int j = 0; j < m.m_columns; ++j) {
+            result(i, j) = 0;
+            for (int l = 0; l < m_columns; ++l) {
+                result(i, j) += (*this)(i, l) * m(l, j);
+            }
+        }
+    }
+    *this = std::move(result);
+    return *this;
+}
 
-//     linalg::Matrix result(m_rows, m_columns); 
-//     for (size_t i = 0; i < m_rows*m_columns; ++i) { 
-//         result.m_ptr[i] = c * m_ptr[i]; 
-//     }
-//     return result;
-// }; 
+//поэлементное перемножение на число Matrix *= double (lvalue)
+linalg::Matrix linalg::Matrix::operator*= (const double c) {
+    if (this->empty()) { throw std::runtime_error("empty matric"); }
+    for (size_t i = 0; i < m_rows, m_columns; ++i) {
+        m_ptr[i] = m_ptr[i] * c;
+    }
+    return *this;
+}
 
-// linalg::Matrix operator* (const linalg::Matrix& matrica, double c) { 
-//     linalg::Matrix result = matrica * c;
-// };
+//проверка матриц на совпадение bool (Matrix == Matrix)
+bool linalg::operator== (const Matrix& m1, const Matrix& m2) {
+    if (m1.rows() != m2.rows() || m1.columns() != m2.columns()) return false;
+    double eps = std::numeric_limits<double>::epsilon();
+    for (size_t i = 0; i < m1.rows(); ++i) {
+        for (size_t j = 0; j < m1.columns(); ++j) {
+            if (std::abs(m1(i, j) - m2(i, j)) > eps * 1000) return false;
+        }
+    }
+    return true;
+}
 
-// bool linalg::Matrix::operator== (const linalg::Matrix &matrica) const { 
-//     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) { 
-//         return false;
-//     }
-//     for (size_t i = 0; i < matrica.m_rows*matrica.m_columns; ++i) { 
-//         if (m_ptr[i] != matrica.m_ptr[i]) { 
-//             return false;
-//         }
-//     }
-//     return true;
-// };
+//проверка матриц на НЕ совпадение Matrix != Matrix (bool)
+bool linalg::operator!= (const Matrix& m1, const Matrix& m2) {
+    return !(m1 == m2);
+}
 
-// double& linalg::Matrix::operator() (int i, int j) { 
-//     return *(m_ptr + i * m_columns + j);
-// };
+//Норма (Фробениуса) 
+double linalg::Matrix::norm() const noexcept {
+    double summa = 0;
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        summa += m_ptr[i] * m_ptr[i];
+    }
+    return sqrt(summa);
+}
 
-// const double& linalg::Matrix::operator()(int i, int j) const { 
-//     return *(m_ptr + i * m_columns + j);
-// };
+//След
+double linalg::Matrix::trace() const {
+    if (m_columns != m_rows) { throw std::runtime_error("wrong size of matric"); }
+    double result = 0;
+    for (size_t i = 0; i < m_rows; ++i) {
+        result += (*this)(i, i);
+    }
+    return result;
+}
 
+//вспомогательный метод, который удаляет у матрицы i строку и j столбей 
+linalg::Matrix linalg::deleteRowCol(const linalg::Matrix& m, size_t i, size_t j) {
+    Matrix newmatrix(m.rows() - 1, m.columns() - 1);
+    size_t new_row = 0;
+    for (size_t q = 0; q < m.rows(); ++q) {
+        if (q == i) continue;
+        size_t new_col = 0;
+        for (size_t z = 0; z < m.columns(); ++z) {
+            if (z == j) continue;
+            newmatrix(new_row, new_col) = m(q, z);
+            ++new_col;
+        }
+        ++new_row;
+    }
+    return newmatrix;
+}
+//Определитель
+double linalg::Matrix::det() const {
+    if (m_rows != m_columns) { throw std::invalid_argument("wrong size matrix"); }
+    if (m_rows == 1) { return (*this)(0, 0); }
+    if (m_columns == 2) { return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0); }
+    double determinant = 0;
+    for (int i = 0; i < m_columns; ++i) {
+        linalg::Matrix newma = deleteRowCol(*this, 0, i);
+        determinant += (i % 2 == 0 ? 1 : -1) * (*this)(0, i) * newma.det();
+    };
+    return determinant;
+}
 
-// bool linalg::Matrix::operator!= (const linalg::Matrix &matrica) const { 
-//     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) { 
-//         return true;
-//     }
-//     for (size_t i = 0; i < matrica.m_rows*matrica.m_columns; ++i) { 
-//         if (m_ptr[i] != matrica.m_ptr[i]) { 
-//             return true;
-//         }
-//     }
-//     return false;
-// }
+//ФУНКЦИИ
+//Соединить правую и левую 
+const linalg::Matrix linalg::concatenate(const Matrix& m1, const Matrix& m2) {
+    if (m1.empty() && m2.empty()) throw std::runtime_error("two matrixs are empty");
+    if (m1.empty()) return m2;
+    if (m2.empty()) return m1;
 
-// double linalg::Matrix::trace() const { 
-//     if (m_columns != m_rows) { 
-//         throw std::invalid_argument("wrong size of matric");
-//     }
-//     double result = 0;
-//     for (size_t i = 0; i < m_rows; ++i) { 
-//         result += *(m_ptr + i*m_columns + i);}
-//     return result;
-// };
+    Matrix result(m1.rows(), m1.columns() + m2.columns());
+    for (size_t i = 0; i < m1.rows(); ++i) {
+        for (size_t j = 0; j < m1.columns() + m2.columns(); ++j) {
+            if (j < m1.columns()) result(i, j) = m1(i, j);
+            else result(i, j) = m2(i, j - m1.columns());
+        }
+    }
+    return result;
+}
 
-// double linalg::Matrix::norm() const { 
-//     double summa = 0; 
-//     for (size_t i = 0; i < m_rows * m_columns; ++i) { 
-//         summa += m_ptr[i]*m_ptr[i]; 
-//     }
-//     return sqrt(summa);
-// };
+//Транспонирование
+const linalg::Matrix linalg::transpose(const Matrix& m) {
+    Matrix result(m.columns(), m.rows());
+    for (size_t i = 0; i < m.columns(); ++i) {
+        for (size_t j = 0; j < m.rows(); ++j) {
+            result(i, j) = m(j, i);
+        }
+    }
+    return result;
+}
 
-// linalg::Matrix linalg::Matrix::deleteRowCol(const linalg::Matrix& m, size_t i, size_t j) const{ 
-//     Matrix newmatrix(m.m_rows-1, m.m_columns -1);
-//     size_t new_row = 0; 
-//     for (size_t q = 0; q < m.m_rows; ++q) { 
-//         if (q == i) continue;
-//         size_t new_col = 0;
-//         for (size_t z = 0; z < m.m_columns; ++z) { 
-//             if (z == j) continue;
-//             newmatrix(new_row, new_col) = m(q, z);
-//             ++new_col;
-//         }
-//         ++new_row;
-//     }
-//     return newmatrix;
-// };
+//Обратная матрица
+const linalg::Matrix linalg::invert(const Matrix& m) {
+    if (m.empty()) throw std::runtime_error("empty matrix");
+    if (m.rows() != m.columns()) throw std::runtime_error("m_rows != m_columns");
+    double eps = std::numeric_limits<double>::epsilon();
+    double determinant = m.det();
+    if (std::abs(determinant - 0) < eps * 1000) throw std::runtime_error("determinant == 0");
+    Matrix result(m.rows(), m.columns());
+    for (size_t i = 0; i < m.rows(); ++i) {
+        for (size_t j = 0; j < m.columns(); ++j) {
+            linalg::Matrix spd = deleteRowCol(m, i, j);
+            result(i, j) = std::pow(-1, i + j) * spd.det() / determinant;
+        }
+    }
+    return transpose(result);
+}
 
-// double linalg::Matrix::det() const { 
-//     if (m_rows != m_columns) { 
-//         throw std::invalid_argument("wrong size matrix");
-//     }
+//единичная матрица 
+linalg::Matrix linalg::matrix_unit(size_t size) {
+    if (size == 0) throw std::runtime_error("matrix is empty");
+    linalg::Matrix m(size, size);
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = 0; j < size; ++j) {
+            if (i == j) m(i, j) = 1;
+            else m(i, j) == 0;
+        }
+    }
+    return m;
+}
 
-//     if (m_rows == 1) {return (*this)(0, 0);}
-//     if (m_columns == 2) {
-//         return (*this)(0, 0)*(*this)(1, 1) - (*this)(0, 1)*(*this)(1,0);}
-//     double determinant = 0;
-//     for (int i = 0; i < m_columns; ++i) { 
-//         linalg::Matrix newma = deleteRowCol(*this, 0, i); 
-//         determinant += (i % 2 == 0 ? 1 : -1) * (*this)(0, i) * newma.det();
-//     };
-//     return determinant;
-// }; 
+//Возведение в степень
+linalg::Matrix linalg::power(const Matrix& m, const int c) {
+    if (m.empty()) { throw std::runtime_error("matrix is empty"); }
+    if (m.rows() != m.columns()) { throw std::runtime_error("size is wrong"); }
+    linalg::Matrix result(m);
+    if (c == 0) { result = matrix_unit(m.rows()); }
+    else if (c < 0) { result = invert(m); }
+    else { result = m; }
+    linalg::Matrix result2 = result;
+    for (int i = 1; i < abs(c); i++) {
+        result = result * result2;
+    }
+    return result;
+}
 
-// linalg::Matrix linalg::Matrix::concatenate(const Matrix& m1, const Matrix& m2) { 
-//     if (m1.m_rows != m2.m_rows) { 
-//         throw std::invalid_argument("different m_rows");
-//     }
-//     Matrix result(m1.m_rows, m1.m_columns + m2.m_columns);
-//     for (size_t i = 0; i < m1.m_rows; ++i) { 
-//         for (size_t j = 0; j < m1.m_columns; ++j) { 
-//             result(i, j) = m1(i, j); 
-//         }
-//     }
-//     for (size_t i = 0; i < m2.m_rows; ++i) { 
-//         for (size_t j = 0; j < m2.m_columns; ++j) { 
-//             result(i, m1.m_columns + j) =  m2(i, j);
-//         }
-//     }
-//     return result; 
-// }; 
-
-// linalg::Matrix linalg::Matrix::transpose() { 
-//     Matrix result(m_columns, m_rows); 
-//     for (size_t i = 0; i < m_columns; ++i) { 
-//         for (size_t j = 0; j < m_rows; ++j) { 
-//             result(i, j) = (*this)(j, i);
-//         }
-//     }
-//     return result; 
-// }; 
-
-// linalg::Matrix linalg::Matrix::invert(const Matrix& matr) { 
-//     if (matr.m_rows != matr.m_columns) { 
-//         throw std::invalid_argument("size matrix is wrong");
-//     }
-//     Matrix result(matr.m_rows, matr.m_columns);
-//     double determinant = matr.det();
-//     if (determinant == 0) { 
-//         throw std::invalid_argument("determinant == 0");
-//     }
-//     for (size_t i = 0; i < matr.m_rows; ++i) { 
-//         for (size_t j = 0; j < matr.m_columns; ++j) { 
-//             linalg::Matrix spd = matr.deleteRowCol(matr,i, j);
-//             result(i, j) = std::pow(-1,i+j) * spd.det() / determinant;
-//         }
-//     }
-
-//     return result.transpose();
-// }
-
-// linalg::Matrix linalg::Matrix::power(const linalg::Matrix& m, int c) { 
-//     Matrix result(m.m_columns, m.m_rows); 
-//     for (size_t i = 0; i < m.m_rows; ++i) {
-//         for (size_t j = 0; j < m.m_columns; ++j) {
-//             result.m_ptr[i * m.m_columns + j] = (i == j) ? 1 : 0;
-//         }
-//     }
-
-//     for (int i = 0; i < c; ++i) { 
-//         result = result * m;
-//     }
-//     return result; 
-// };
 
 // linalg::Matrix linalg::Matrix::U(const Matrix& m) { 
 //     Matrix u(m);
@@ -434,3 +459,4 @@ std::ostream& linalg::operator << (std::ostream& out, const linalg::Matrix& m) {
 //     }
 //     return u;
 // };
+

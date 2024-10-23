@@ -38,7 +38,6 @@ namespace linalg {
 
 
         Matrix operator+= (const Matrix& matrica);
-
         Matrix operator-= (const Matrix& matrica);
         Matrix operator*= (const Matrix& matrica);
         Matrix operator*= (const double c);
@@ -47,9 +46,6 @@ namespace linalg {
         double trace() const;
         double norm() const noexcept;
         double det() const;
-
-        bool operator== (const Matrix& matrica) const;
-        bool operator!= (const Matrix& matrica) const;
     private:
         double* m_ptr = nullptr;
         size_t m_rows = 0;
@@ -58,6 +54,7 @@ namespace linalg {
 
     const Matrix transpose(const Matrix& matrica);
     Matrix power(const Matrix& m, const int c);
+    Matrix matrix_unit(size_t size);
     const Matrix concatenate(const linalg::Matrix& m1, const linalg::Matrix& m2);
     const Matrix invert(const linalg::Matrix& matr);
     const Matrix operator+ (const Matrix& m1, const Matrix& m2);
