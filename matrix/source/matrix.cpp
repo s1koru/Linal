@@ -1,9 +1,7 @@
 #include <matrix.h>
 #include <iostream>
-#include <initializer_list>
 #include <stdexcept> 
 #include <cmath>
-
 linalg::Matrix::Matrix(size_t rows, size_t columns) {
     m_ptr = new double[rows * columns];
     m_rows = rows;
@@ -18,6 +16,7 @@ void linalg::Matrix::reshape(int rows, int cols) {
     if (rows == 0 || cols == 0) {
         throw std::runtime_error("Empty matrix");
     }
+
     if (m_rows != rows || m_columns != cols) {
         delete[] m_ptr;
         m_ptr = new double[rows * cols];
@@ -34,11 +33,9 @@ void linalg::Matrix::reshape(int rows, int cols) {
                 break;
             }
         }
-
         if (!change) {
             throw std::runtime_error("impossible reshape");
         }
-
     }
 };
 
@@ -60,6 +57,7 @@ linalg::Matrix::Matrix(const Matrix& s) {
     for (size_t i = 0; i < m_rows * m_columns; ++i) {
         m_ptr[i] = s.m_ptr[i];
     }
+
 };
 
 linalg::Matrix::Matrix(Matrix&& s) {
@@ -67,7 +65,7 @@ linalg::Matrix::Matrix(Matrix&& s) {
     std::swap(m_rows, s.m_rows);
     std::swap(m_columns, s.m_columns);
 
-    s.m_ptr = nullptr;
+    s.m_ptr = nullptr; //обнуляем ресурсы у объекта s 
     s.m_rows = 0;
     s.m_columns = 0;
 };
@@ -103,7 +101,6 @@ linalg::Matrix::Matrix(std::initializer_list<std::initializer_list<double>> s) {
     }
 };
 
-
 linalg::Matrix& linalg::Matrix::operator= (const Matrix& m) {
     if (m_columns * m_rows != m_columns * m_rows) {
         delete[] m_ptr;
@@ -115,7 +112,6 @@ linalg::Matrix& linalg::Matrix::operator= (const Matrix& m) {
     for (size_t i = 0; i < m_rows * m_columns; ++i) {
         m_ptr[i] = m.m_ptr[i];
     }
-
     return *this;
 };
 
@@ -140,7 +136,6 @@ const double& linalg::Matrix::operator()(size_t row, size_t cols) const {
     return m_ptr[row * m_columns + cols];
 };
 
-
 double& linalg::Matrix::operator() (int i, int j) {
     return *(m_ptr + i * m_columns + j);
 };
@@ -150,18 +145,15 @@ const double& linalg::Matrix::operator()(int i, int j) const {
 };
 
 void linalg::Matrix::print() const {
-    std::cout << std::fixed;  // Устанавливаем вывод в фиксированном формате (десятичная форма)
-    std::cout.precision(3);   // Устанавливаем количество знаков после запятой (3 знака, можно изменить)
-
     for (int i = 0; i < m_rows; ++i) {
         std::cout << " | ";
         for (int j = 0; j < m_columns; ++j) {
-            std::cout.width(6);  // Ширина поля для вывода элемента (подстраивай под размер чисел)
+            std::cout.width(3);
             std::cout << *(m_ptr + i * m_columns + j) << " ";
         }
         std::cout << "| \n" << std::endl;
     }
-}
+};
 
 linalg::Matrix linalg::Matrix::operator+ (const linalg::Matrix& matrica) const {
     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
@@ -204,15 +196,22 @@ linalg::Matrix linalg::Matrix::operator-= (const linalg::Matrix& matrica) {
     }
     return *this;
 };
-linalg::Matrix linalg::Matrix::operator* (const double c) const {
-    if (empty()) { throw std::invalid_argument("empty matric"); }
 
-    linalg::Matrix result(m_rows, m_columns);
-    for (size_t i = 0; i < m_rows * m_columns; ++i) {
-        result.m_ptr[i] = c * m_ptr[i];
+linalg::Matrix linalg::Matrix::operator* (const linalg::Matrix& matrica) const {
+    if (m_columns != matrica.m_rows) {
+        throw std::invalid_argument("sizes matrix different");
     }
-    return result;
-};
+    Matrix conclusion(m_rows, matrica.m_columns);
+    for (int i = 0; i < m_rows; ++i) {
+        for (int j = 0; j < matrica.m_columns; ++j) {
+            conclusion(i, j) = 0;
+            for (int l = 0; l < m_columns; ++l) {
+                conclusion(i, j) += (*this)(i, l) * matrica(l, j);
+            }
+        }
+    }
+    return conclusion;
+}
 
 linalg::Matrix linalg::Matrix::operator*= (const linalg::Matrix& matrica) {
     if (m_columns != matrica.m_rows) {
@@ -230,11 +229,21 @@ linalg::Matrix linalg::Matrix::operator*= (const linalg::Matrix& matrica) {
     *this = std::move(conclusion);
     return *this;
 }
+
+linalg::Matrix linalg::Matrix::operator* (const double c) const {
+    if (empty()) { throw std::invalid_argument("empty matric"); }
+
+    linalg::Matrix result(m_rows, m_columns);
+    for (size_t i = 0; i < m_rows * m_columns; ++i) {
+        result.m_ptr[i] = c * m_ptr[i];
+    }
+    return result;
+};
+
 bool linalg::Matrix::operator== (const linalg::Matrix& matrica) const {
     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
         return false;
     }
-    bool cov = true;
     for (size_t i = 0; i < matrica.m_rows * matrica.m_columns; ++i) {
         if (m_ptr[i] != matrica.m_ptr[i]) {
             return false;
@@ -242,6 +251,7 @@ bool linalg::Matrix::operator== (const linalg::Matrix& matrica) const {
     }
     return true;
 }
+
 bool linalg::Matrix::operator!= (const linalg::Matrix& matrica) const {
     if (m_rows != matrica.m_rows || m_columns != matrica.m_columns) {
         return true;
@@ -253,6 +263,7 @@ bool linalg::Matrix::operator!= (const linalg::Matrix& matrica) const {
     }
     return false;
 }
+
 double linalg::Matrix::trace() const {
     if (m_columns != m_rows) {
         throw std::invalid_argument("wrong size of matric");
@@ -263,16 +274,35 @@ double linalg::Matrix::trace() const {
     }
     return result;
 };
+
 double linalg::Matrix::norm() const {
     double summa = 0;
     for (size_t i = 0; i < m_rows * m_columns; ++i) {
         summa += m_ptr[i] * m_ptr[i];
     }
     return sqrt(summa);
+};
+
+linalg::Matrix linalg::Matrix::transpose() {
+    Matrix result(m_columns, m_rows);
+    for (size_t i = 0; i < m_columns; ++i) {
+        for (size_t j = 0; j < m_rows; ++j) {
+            result(i, j) = (*this)(j, i);
+        }
+    }
+    return result;
+};
+
+linalg::Matrix linalg::Matrix::power(const linalg::Matrix& m, int c) {
+    Matrix result(m.m_columns, m.m_rows);
+    for (size_t i = 0; i < m.m_rows; ++i) {
+        for (size_t j = 0; j < m.m_columns; ++j) {
+            result.m_ptr[i * m.m_columns + j] = (i == j) ? 1 : 0;
+        }
+    }
+
+    for (int i = 0; i < c; ++i) {
+        result = result * m;
+    }
+    return result;
 }
-
-
-
-
-
-
