@@ -15,10 +15,6 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
     if (rows == 0 || cols == 0) {
         throw std::runtime_error("empty matrix");
     }
-    if (rows * cols != m_rows * m_columns) {
-        throw std::runtime_error("impossilbe to change size");
-    }
-
     m_rows = rows;
     m_columns = cols;
 }
@@ -26,22 +22,27 @@ void linalg::Matrix::reshape(size_t rows, size_t cols) {
 //конструктор с одним параметром 
 linalg::Matrix::Matrix(size_t rows) : Matrix() {
     m_rows = rows;
-    if (rows < 0) {
-        throw std::runtime_error("impossible number of lines");
+    if (rows == 0) {
+        m_ptr = nullptr;
+        m_columns = m_rows = 0;
+        return;
     }
     m_columns = 1;
     m_ptr = new double[rows * 1];
 };
 
 //конструктор с двумя параметрами 
-linalg::Matrix::Matrix(size_t rows, size_t columns) : Matrix() {
-    m_rows = rows;
-    m_columns = columns;
-    if (rows < 0 || columns < 0) {
-        throw std::runtime_error("impossible number of lines or columns");
+linalg::Matrix::Matrix(size_t rows, size_t columns) : Matrix(){
+    if (rows == 0 || columns == 0) {
+        m_ptr = nullptr;
+        m_columns = m_rows = 0;
+        return;
     }
-    m_ptr = new double[rows * columns];
+    m_rows = rows; 
+    m_columns = columns;
+    m_ptr = new double[rows * columns]; 
 }
+
 
 
 //конструктор копирования
@@ -398,20 +399,28 @@ double linalg::Matrix::det() const {
 
 //ФУНКЦИИ
 //Соединить правую и левую 
-const linalg::Matrix linalg::concatenate(const Matrix& m1, const Matrix& m2) {
-    if (m1.empty() && m2.empty()) throw std::runtime_error("two matrixs are empty");
-    if (m1.empty()) return m2;
-    if (m2.empty()) return m1;
+const linalg::Matrix linalg::concatenate (const Matrix & m1, const Matrix& m2){
+	size_t rows1 = m1.rows();
+	size_t rows2 = m2.rows();
+	size_t cols1 = m1.columns();
+	size_t cols2 = m2.columns();
 
-    Matrix result(m1.rows(), m1.columns() + m2.columns());
-    for (size_t i = 0; i < m1.rows(); ++i) {
-        for (size_t j = 0; j < m1.columns() + m2.columns(); ++j) {
-            if (j < m1.columns()) result(i, j) = m1(i, j);
-            else result(i, j) = m2(i, j - m1.columns());
-        }
-    }
-    return result;
+	if (rows1 != rows2) {
+		throw std::invalid_argument("Matrix1 and Matrix2 should have same number of rows");
+	}
+	linalg::Matrix newMatrix(rows1, cols1 + cols2);
+	for (size_t i = 0; i < rows1;++i) {
+		for (size_t j = 0; j < cols1; ++j) {
+			newMatrix(i, j) = m1(i, j);
+		}
+		for (size_t j = 0; j < cols2; ++j) {
+			newMatrix(i, j+cols1) = m2(i, j);
+		}
+	}
+	return newMatrix;
 }
+
+
 
 //Транспонирование
 const linalg::Matrix linalg::transpose(const Matrix& m) {

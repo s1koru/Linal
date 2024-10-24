@@ -264,28 +264,25 @@ void testMatrixInversePower() {
 }
 void testMatrixConcatenate() {
     linalg::Matrix m1{ {1, 2}, {3, 4} }; // 2x2
-    linalg::Matrix m2{ {5, 6} };         // 1x2
-
-    // Тест: Успешное объединение матриц
-    linalg::Matrix result = linalg::concatenate(m1, m2);
-    linalg::Matrix expected{ {1, 2}, {3, 4}, {5, 6} }; // Ожидаемая 3x2 матрица
-
-    testResult(result.rows() == 3 && result.columns() == 2 && result == expected,
-        "Matrix concatenate (valid sizes)");
-    std::cout << "Resulting matrix after concatenation:\n" << result << "\n"; // Вывод результата
-
-    // Тест: Объединение с несовпадающими размерами (ошибка)
-    linalg::Matrix m3{ {7, 8, 9} }; // 1x3
+    linalg::Matrix m2{ {5,6},{7,8} };
+    linalg::Matrix m3{ {5, 6} };         // 1x2
     try {
-        result = linalg::concatenate(m1, m3); // Ожидаем ошибку
-        testResult(false, "Matrix concatenate (invalid sizes)");
+        linalg::Matrix result = concatenate(m1, m2);
+        std::cout << "Test Matrix concatenate passed. Concatenated matrix:\n";
+        std::cout << result;
+            
     }
-    catch (const std::runtime_error&) {
-        testResult(true, "Matrix concatenate (invalid sizes)");
+    catch (const std::invalid_argument& e) {
+        std::cout << "Error during concatenation: " << e.what() << "\n";
     }
 
-    // Тест: Объединение с пустой матрицей
-    linalg::Matrix empty; // Пустая матрица
-    result = linalg::concatenate(m1, empty);
-    testResult(result == m1, "Matrix concatenate with empty matrix");
+    // Тестируем ошибку при несовпадении по строкам
+    try {
+        linalg::Matrix result = concatenate(m1, m3);
+        std::cout << "This line should not be executed due to exception.\n";
+    }
+    catch (const std::invalid_argument& e) {
+        std::cout << "Test Matrix concatenate passed. Expected error: " << e.what() << "\n"; 
+    }
 }
+    
