@@ -1,6 +1,21 @@
-#include "test.h"  // Заголовочный файл с тестами
+#include "test.h"  
 
 int main() {
-    runAllTests();  // Запуск всех тестов
+
+    testMatrixAddition();
+    testMatrixMultiplication();
+    testMatrixTranspose();
+    testMatrixDeterminant();
+    testMatrixInverse();
+    testMatrixTrace();
+    testMatrixNorm();
+    testMatrixGaussianElimination();
+    testMatrixRank();
+    testMatrixPower();
+    testMatrixTransposeInverse();
+    testMatrixInverseProduct(); 
+    testMatrixInversePower(); 
+    testMatrixConcatenate();
+
     return 0;
 }

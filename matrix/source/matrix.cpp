@@ -43,6 +43,7 @@ linalg::Matrix::Matrix(size_t rows, size_t columns) : Matrix() {
     m_ptr = new double[rows * columns];
 }
 
+
 //конструктор копирования
 linalg::Matrix::Matrix(const Matrix& s) {
     m_rows = s.m_rows;
