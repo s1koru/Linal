@@ -377,16 +377,23 @@ linalg::Matrix linalg::deleteRowCol(const linalg::Matrix& m, size_t i, size_t j)
 }
 //Определитель
 double linalg::Matrix::det() const {
-    //if (m_rows != m_columns) { throw std::invalid_argument("wrong size matrix"); }
-    if (m_rows == 1) { return (*this)(0, 0); }
-    if (m_columns == 2) { return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0); }
+    if (m_rows != m_columns) {
+        throw std::invalid_argument("Matrix must be square");
+    }
+    if (m_rows == 1) {
+        return (*this)(0, 0);
+    }
+    if (m_columns == 2) {
+        return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
+    }
     double determinant = 0;
     for (int i = 0; i < m_columns; ++i) {
         linalg::Matrix newma = deleteRowCol(*this, 0, i);
         determinant += (i % 2 == 0 ? 1 : -1) * (*this)(0, i) * newma.det();
-    };
+    }
     return determinant;
 }
+
 
 //ФУНКЦИИ
 //Соединить правую и левую 

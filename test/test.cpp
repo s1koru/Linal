@@ -10,12 +10,20 @@ bool areEqual(double a, double b, double epsilon = 1e-7) {
 }
 
 // Вспомогательная функция для вывода результата теста
-void testResult(bool condition, const std::string& testName) {
+void testResult(bool condition, const std::string& testName, const linalg::Matrix& resultMatrix = linalg::Matrix(0, 0)) {
     if (condition) {
-        std::cout << "Test " << testName << " passed." << std::endl;
+        std::cout << "Test " << testName << " passed.";
     }
     else {
-        std::cout << "Test " << testName << " failed." << std::endl;
+        std::cout << "Test " << testName << " failed.";
+    }
+
+    // Если передана матрица, выводим её через перегруженный оператор <<
+    if (resultMatrix.rows() > 0) {
+        std::cout << " Resulting matrix:\n" << resultMatrix << std::endl;
+    }
+    else {
+        std::cout << std::endl;  // просто перенос строки если матрицы нет
     }
 }
 
@@ -37,7 +45,7 @@ void testMatrixAddition() {
     linalg::Matrix m2{ {4, 3}, {2, 1} };
     linalg::Matrix result = m1 + m2;
 
-    testResult(result(0, 0) == 5 && result(0, 1) == 5 && result(1, 0) == 5 && result(1, 1) == 5, "Matrix addition");
+    testResult(result(0, 0) == 5 && result(0, 1) == 5 && result(1, 0) == 5 && result(1, 1) == 5, "Matrix addition", result);
 
     try {
         linalg::Matrix m3{ {1, 2} };
@@ -51,10 +59,10 @@ void testMatrixAddition() {
 
 void testMatrixMultiplication() {
     linalg::Matrix m1{ {1, 2}, {3, 4} };
-    linalg::Matrix m2{ {2, 0}, {1, 2} };
+    linalg::Matrix m2{ {4, 3}, {2, 1} };
     linalg::Matrix result = m1 * m2;
 
-    testResult(result(0, 0) == 4 && result(0, 1) == 4 && result(1, 0) == 10 && result(1, 1) == 8, "Matrix multiplication");
+    testResult(result(0, 0) == 8 && result(0, 1) == 5 && result(1, 0) == 20 && result(1, 1) == 13, "Matrix multiplication", result);
 
     try {
         linalg::Matrix m3{ {1, 2} };
@@ -71,31 +79,38 @@ void testMatrixTranspose() {
     linalg::Matrix result = linalg::transpose(m);
 
     testResult(result(0, 0) == 1 && result(1, 0) == 2 && result(2, 0) == 3 &&
-        result(0, 1) == 4 && result(1, 1) == 5 && result(2, 1) == 6, "Matrix transpose");
+        result(0, 1) == 4 && result(1, 1) == 5 && result(2, 1) == 6, "Matrix transpose", result);
 }
 
 void testMatrixDeterminant() {
     linalg::Matrix m{ {1, 2}, {3, 4} };
     double det = m.det();
 
-    testResult(areEqual(det, -2.0), "Matrix determinant");
+    if (std::fabs(det + 2.0) < 1e-7) {
+        std::cout << "Test Matrix determinant passed. Determinant: " << det << "\n";
+    }
+    else {
+        std::cout << "Test Matrix determinant failed. Determinant: " << det << "\n";
+    }
 
     try {
+        // Матрица с неверным числом столбцов и строк
         linalg::Matrix m_invalid{ {1, 2, 3}, {4, 5, 6} };
         det = m_invalid.det();
-        testResult(false, "Matrix determinant invalid size");
+        std::cout << "Test Matrix determinant invalid size failed. Determinant: " << det << "\n";
     }
-    catch (const std::runtime_error&) {
-        testResult(true, "Matrix determinant invalid size");
+    catch (const std::invalid_argument&) {  // Ловим std::invalid_argument
+        std::cout << "Test Matrix determinant invalid size passed.\n";
     }
 }
+
 
 void testMatrixInverse() {
     linalg::Matrix m{ {4, 7}, {2, 6} };
     linalg::Matrix result = linalg::invert(m);
 
     testResult(areEqual(result(0, 0), 0.6) && areEqual(result(0, 1), -0.7) &&
-        areEqual(result(1, 0), -0.2) && areEqual(result(1, 1), 0.4), "Matrix inversion");
+        areEqual(result(1, 0), -0.2) && areEqual(result(1, 1), 0.4), "Matrix inversion", result);
 
     try {
         linalg::Matrix singular{ {1, 2}, {2, 4} };
