@@ -49,11 +49,19 @@ cmake_ninja_workdir = C$:\Users\serge\Desktop\lababa\labarotory_1\out\build\x64-
 
 build cmake_object_order_depends_target_proga: phony || cmake_object_order_depends_target_matrix
 
-build CMakeFiles\proga.dir\source\main.cpp.obj: CXX_COMPILER__proga_unscanned_Debug C$:\Users\serge\Desktop\lababa\labarotory_1\source\main.cpp || cmake_object_order_depends_target_proga
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17
+build CMakeFiles\proga.dir\test\main.cpp.obj: CXX_COMPILER__proga_unscanned_Debug C$:\Users\serge\Desktop\lababa\labarotory_1\test\main.cpp || cmake_object_order_depends_target_proga
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -IC:\Users\serge\Desktop\lababa\labarotory_1\matrix\include
   OBJECT_DIR = CMakeFiles\proga.dir
-  OBJECT_FILE_DIR = CMakeFiles\proga.dir\source
+  OBJECT_FILE_DIR = CMakeFiles\proga.dir\test
+  TARGET_COMPILE_PDB = CMakeFiles\proga.dir\
+  TARGET_PDB = proga.pdb
+
+build CMakeFiles\proga.dir\test\test.cpp.obj: CXX_COMPILER__proga_unscanned_Debug C$:\Users\serge\Desktop\lababa\labarotory_1\test\test.cpp || cmake_object_order_depends_target_proga
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -IC:\Users\serge\Desktop\lababa\labarotory_1\matrix\include
+  OBJECT_DIR = CMakeFiles\proga.dir
+  OBJECT_FILE_DIR = CMakeFiles\proga.dir\test
   TARGET_COMPILE_PDB = CMakeFiles\proga.dir\
   TARGET_PDB = proga.pdb
 
@@ -65,7 +73,7 @@ build CMakeFiles\proga.dir\source\main.cpp.obj: CXX_COMPILER__proga_unscanned_De
 #############################################
 # Link the executable proga.exe
 
-build proga.exe: CXX_EXECUTABLE_LINKER__proga_Debug CMakeFiles\proga.dir\source\main.cpp.obj | matrix\matrix.lib || matrix\matrix.lib
+build proga.exe: CXX_EXECUTABLE_LINKER__proga_Debug CMakeFiles\proga.dir\test\main.cpp.obj CMakeFiles\proga.dir\test\test.cpp.obj | matrix\matrix.lib || matrix\matrix.lib
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = matrix\matrix.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
@@ -115,7 +123,7 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 build cmake_object_order_depends_target_matrix: phony || .
 
 build matrix\CMakeFiles\matrix.dir\source\matrix.cpp.obj: CXX_COMPILER__matrix_unscanned_Debug C$:\Users\serge\Desktop\lababa\labarotory_1\matrix\source\matrix.cpp || cmake_object_order_depends_target_matrix
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -IC:\Users\serge\Desktop\lababa\labarotory_1\matrix\include
   OBJECT_DIR = matrix\CMakeFiles\matrix.dir
   OBJECT_FILE_DIR = matrix\CMakeFiles\matrix.dir\source
