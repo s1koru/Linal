@@ -1,5 +1,13 @@
 # ninja log v5
-33	883	7514280278854071	matrix/CMakeFiles/matrix.dir/source/matrix.cpp.obj	451372f29f854d85
+55	1049	7514359835483166	matrix/CMakeFiles/matrix.dir/source/matrix.cpp.obj	75521b17d6a89967
+15	478	7514376983356817	CMakeFiles/proga.dir/test/test.cpp.obj	99e47d84f05f6a89
 13	584	7514280929775490	CMakeFiles/proga.dir/source/main.cpp.obj	34ec84cae04f2ab2
-883	1125	7514280281257924	matrix/matrix.lib	278660ddc83aff04
-584	966	7514280932238901	proga.exe	e1f8f583c4e54199
+54	283	7514374382831871	matrix/matrix.lib	278660ddc83aff04
+1986	2820	7514341476372292	proga.exe	b578dc0d97967f20
+13	791	7514378003019534	CMakeFiles/proga.dir/test/main.cpp.obj	f28ef8611012292f
+13	729	7514389596168199	CMakeFiles/proga.dir/test/main.cpp.obj	f28ef8611012292f
+34	1001	7514389598888189	CMakeFiles/proga.dir/test/test.cpp.obj	99e47d84f05f6a89
+1002	1600	7514389603769187	proga.exe	b578dc0d97967f20
+15	750	7514389943484583	matrix/CMakeFiles/matrix.dir/source/matrix.cpp.obj	75521b17d6a89967
+751	980	7514389945748522	matrix/matrix.lib	278660ddc83aff04
+980	1302	7514389948057834	proga.exe	b578dc0d97967f20

@@ -301,12 +301,19 @@ linalg::Matrix linalg::Matrix::operator*= (const Matrix& m) {
 
 //поэлементное перемножение на число Matrix *= double (lvalue)
 linalg::Matrix linalg::Matrix::operator*= (const double c) {
-    if (this->empty()) { throw std::runtime_error("empty matric"); }
-    for (size_t i = 0; i < m_rows, m_columns; ++i) {
-        m_ptr[i] = m_ptr[i] * c;
+    if (this->empty()) {
+        throw std::runtime_error("empty matrix");
     }
+
+    for (size_t i = 0; i < m_rows; ++i) {
+        for (size_t j = 0; j < m_columns; ++j) {
+            m_ptr[i * m_columns + j] *= c;  // Изменяем элемент на m_ptr[i][j] *= c
+        }
+    }
+
     return *this;
 }
+
 
 bool linalg::operator== (const Matrix& m1, const Matrix& m2) {
     // Проверка на равенство количества строк и столбцов
@@ -370,7 +377,7 @@ linalg::Matrix linalg::deleteRowCol(const linalg::Matrix& m, size_t i, size_t j)
 }
 //Определитель
 double linalg::Matrix::det() const {
-    if (m_rows != m_columns) { throw std::invalid_argument("wrong size matrix"); }
+    //if (m_rows != m_columns) { throw std::invalid_argument("wrong size matrix"); }
     if (m_rows == 1) { return (*this)(0, 0); }
     if (m_columns == 2) { return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0); }
     double determinant = 0;
