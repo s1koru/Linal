@@ -20,6 +20,7 @@ int main() {
     testMatrixInverseProduct(); 
     testMatrixInversePower(); 
     testMatrixConcatenate();
+    testMatrixReshape();
 
     return 0;
 }

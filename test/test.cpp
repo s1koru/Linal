@@ -285,4 +285,33 @@ void testMatrixConcatenate() {
         std::cout << "Test Matrix concatenate passed. Expected error: " << e.what() << "\n"; 
     }
 }
-    
+void testMatrixReshape() {
+    // Тест 1: Обычное изменение размеров (3x2 на 2x3)
+    linalg::Matrix m1 = { {1, 2, 3}, {4, 5, 6} };
+    m1.reshape(3, 2);
+    std::cout << "Reshaped matrix (3x2):\n" << m1 << std::endl;
+
+    // Тест 2: Изменение на некорректные размеры (должно бросить исключение)
+    try {
+        linalg::Matrix m2 = { {1, 2, 3}, {4, 5, 6} };
+        m2.reshape(0, 3);  // недопустимые размеры
+    }
+    catch (const std::runtime_error& e) {
+        std::cout << "Caught expected exception: " << e.what() << std::endl;
+    }
+
+    // Тест 3: Сохранение количества элементов после изменения (2x3 на 3x2)
+    linalg::Matrix m3 = { {1, 2, 3}, {4, 5, 6} };
+    m3.reshape(3, 2);
+    std::cout << "Reshaped matrix (3x2):\n" << m3 << std::endl;
+
+    // Тест 4: Проверка данных после изменения
+    linalg::Matrix m4 = { {1, 2, 3, 4}, {5, 6, 7, 8} };
+    m4.reshape(4, 2);
+    if (m4(0, 0) == 1 && m4(3, 1) == 8) {
+        std::cout << "Data preserved correctly after reshape.\n"<<m4<<"\n";
+    }
+    else {
+        std::cout << "Data not preserved after reshape!\n";
+    }
+}
