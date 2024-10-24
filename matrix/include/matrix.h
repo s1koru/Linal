@@ -61,7 +61,7 @@ namespace linalg {
     const Matrix invert(const linalg::Matrix& matr);
     const Matrix operator+ (const Matrix& m1, const Matrix& m2);
     const Matrix operator- (const Matrix& m1, const Matrix& m2);
-    const Matrix operator * (double z, const Matrix& matrica);
+    const Matrix operator * (double z, const Matrix& m);
     bool operator== (const Matrix& m1, const Matrix& m2);
     bool operator!= (const Matrix& m1, const Matrix& m2);
     const Matrix operator* (const Matrix& m1, const Matrix& m2);
